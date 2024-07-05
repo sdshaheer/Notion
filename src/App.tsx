@@ -20,8 +20,8 @@ const initialNotionState: Notion = {
 
 const App: React.FC = () => {
   const [todo, setTodo] = useState<string>("")
-  const [todos, setTodos] = useState<Todo[]>([])
-  const [completedTodos, setCompletedTodos] = useState<Todo[]>([])
+  // const [todos, setTodos] = useState<Todo[]>([])
+  // const [completedTodos, setCompletedTodos] = useState<Todo[]>([])
 
   const [notion, setNotion] = useState<Notion>(initialNotionState)
 
@@ -43,7 +43,6 @@ const App: React.FC = () => {
   }
 
   const onDragEnd = (result: DropResult) => {
-    console.log(result)
     const { source, destination } = result
 
     if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return
