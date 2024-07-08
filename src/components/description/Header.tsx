@@ -5,7 +5,6 @@ import TodoMenu from '../menus/TodoMenu';
 import { useNotion } from '../../context/notionContext';
 import { basePath } from '../../utils';
 import axios from 'axios';
-import { Todo } from '../../models/Todo';
 import Spinner from '../Spinner'
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
@@ -76,7 +75,7 @@ const Header: React.FC<props> = ({
 
         try {
             setIsLoading(true)
-            const response = await axios.delete(`${basePath}/todo/deleteTodo`,
+            await axios.delete(`${basePath}/todo/deleteTodo`,
                 {
                     headers: { Authorization: user?.accessToken },
                     data: {

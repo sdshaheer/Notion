@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { LuAlignLeft } from "react-icons/lu";
-import { useNotion } from '../../context/notionContext';
 
 interface props {
     isEdit: boolean

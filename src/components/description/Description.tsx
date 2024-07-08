@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import ModalWrapper from '../../customComponents/ModalWrapper';
 import Header from './Header';
 import BodyDescription from './BodyDescription';

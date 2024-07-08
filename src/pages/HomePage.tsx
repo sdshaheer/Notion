@@ -24,7 +24,7 @@ const HomePage = () => {
                     <div className={`${baseStyle} ${!isLoginPage ? 'bg-blue-100' : ''}`} onClick={() => handleChange('signUp')}>Sign Up</div>
                 </div>
                 <div className='w-full'>
-                    {isLoginPage ? <Login /> : <SignUp setIsLoginPage={setIsLoginPage} />}
+                    {isLoginPage ? <Login /> : <SignUp />}
                 </div>
             </div>
         </div>

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Task } from '../models/Todo'
+import React, { useState, useEffect } from 'react'
 import { Todo } from '../models/Todo'
 import SingleTodo from './SingleTodo'
 import { Droppable } from 'react-beautiful-dnd'
@@ -95,7 +94,7 @@ const Tasks: React.FC<props> = ({ taskId, todos }) => {
 
         try {
             setIsLoading(true)
-            const response = await axios.delete(`${basePath}/task/deleteTask`,
+            await axios.delete(`${basePath}/task/deleteTask`,
                 {
                     headers: { Authorization: user?.accessToken },
                     data: {

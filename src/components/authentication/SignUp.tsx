@@ -8,10 +8,6 @@ import { basePath } from '../../utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-interface props {
-    setIsLoginPage: React.Dispatch<React.SetStateAction<boolean>>
-}
-
 interface FormData {
     name: string;
     email: string;
@@ -23,7 +19,7 @@ interface FormErrors {
     [key: string]: string;
 }
 
-const SignUp: React.FC<props> = ({ setIsLoginPage }) => {
+const SignUp: React.FC = () => {
 
 
     const [data, setData] = useState<FormData>({

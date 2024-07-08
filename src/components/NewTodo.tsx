@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { basePath } from '../utils'
-import { NotionInterface } from '../models/Todo'
 import { toast } from 'react-toastify'
 import { useNotion } from '../context/notionContext'
 import { useAuth } from '../context/AuthContext'
