@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MdOutlineSubtitles } from "react-icons/md";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TodoMenu from '../menus/TodoMenu';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Todo } from '../../models/Todo';
 import Spinner from '../Spinner'
 import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
 
 
 interface props {
@@ -28,6 +29,8 @@ const Header: React.FC<props> = ({
 }) => {
 
     const { notion, setNotion, selectedTodo } = useNotion()
+    const { user } = useAuth()
+
     const [taskName, setTaskName] = useState<string>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<null | SVGElement>(null);
@@ -41,7 +44,10 @@ const Header: React.FC<props> = ({
     const fetchTodoDetails = async () => {
         try {
             const response = await axios.get(`${basePath}/todo/todoDetails`,
-                { params: { todoId: selectedTodo?._id } }
+                {
+                    params: { todoId: selectedTodo?._id },
+                    headers: { Authorization: user?.accessToken }
+                }
             )
             setTaskName(response.data?.task?.taskName)
         } catch (error) {
@@ -72,6 +78,7 @@ const Header: React.FC<props> = ({
             setIsLoading(true)
             const response = await axios.delete(`${basePath}/todo/deleteTodo`,
                 {
+                    headers: { Authorization: user?.accessToken },
                     data: {
                         todoId: selectedTodo?._id,
                     }

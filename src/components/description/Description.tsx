@@ -7,6 +7,7 @@ import { basePath } from '../../utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Spinner from '../Spinner'
+import { useAuth } from '../../context/AuthContext';
 
 interface props {
     isOpen: boolean
@@ -17,6 +18,7 @@ interface props {
 const Description: React.FC<props> = ({ isOpen, handleClose }) => {
 
     const { notion, selectedTodo, setNotion } = useNotion()
+    const { user } = useAuth()
 
     const [isEdit, setIsEdit] = useState<boolean>(false)
     const [title, setTitle] = useState<string>('');
@@ -51,7 +53,9 @@ const Description: React.FC<props> = ({ isOpen, handleClose }) => {
                     todoId: selectedTodo?._id,
                     title,
                     description
-                }
+                },
+                { headers: { Authorization: user?.accessToken } }
+
             )
 
             const todosInTask = notion[selectedTodo?.task].map(todo =>

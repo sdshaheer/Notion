@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { basePath } from '../utils'
-import { Notion } from '../models/Todo'
+import { NotionInterface } from '../models/Todo'
 import { toast } from 'react-toastify'
 import { useNotion } from '../context/notionContext'
+import { useAuth } from '../context/AuthContext'
 
 
 interface props {
@@ -14,6 +15,7 @@ interface props {
 
 const NewTodo: React.FC<props> = ({ taskId, isNewTodo, setIsNewTodo }) => {
 
+    const { user } = useAuth()
     const [todoName, setTodoName] = useState<string>('')
     const { notion, setNotion } = useNotion()
 
@@ -32,7 +34,9 @@ const NewTodo: React.FC<props> = ({ taskId, isNewTodo, setIsNewTodo }) => {
                     task: taskId,
                     title: todoName,
                     description: ''
-                }
+                },
+                { headers: { Authorization: user?.accessToken } }
+
             )
             setTodoName('')
             setIsNewTodo(false)

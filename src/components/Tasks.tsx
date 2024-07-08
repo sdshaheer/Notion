@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import { IoIosClose } from "react-icons/io";
 import { useNotion } from '../context/notionContext'
 import Spinner from './Spinner'
+import { useAuth } from '../context/AuthContext'
 
 interface props {
     taskId: string
@@ -21,6 +22,7 @@ interface props {
 const Tasks: React.FC<props> = ({ taskId, todos }) => {
 
     const { notion, setNotion } = useNotion()
+    const { user } = useAuth()
     const [taskName, setTaskName] = useState<string>()
     const [anchorEl, setAnchorEl] = useState<null | SVGElement>(null);
     const [isNewTodo, setIsNewTodo] = useState<boolean>(false)
@@ -36,7 +38,10 @@ const Tasks: React.FC<props> = ({ taskId, todos }) => {
     const getTaskDetails = async () => {
         try {
             const response = await axios.get(`${basePath}/task/taskDetails`,
-                { params: { taskId } }
+                {
+                    params: { taskId },
+                    headers: { Authorization: user?.accessToken }
+                }
             )
             setTaskName(response.data?.taskName)
         } catch (error) {
@@ -51,7 +56,9 @@ const Tasks: React.FC<props> = ({ taskId, todos }) => {
                     {
                         taskId: taskId,
                         taskName: renamedTask
-                    }
+                    },
+                    { headers: { Authorization: user?.accessToken } }
+
                 )
                 toast.success(`task name changed to ${taskName}`)
                 setTaskName(renamedTask)
@@ -90,10 +97,11 @@ const Tasks: React.FC<props> = ({ taskId, todos }) => {
             setIsLoading(true)
             const response = await axios.delete(`${basePath}/task/deleteTask`,
                 {
+                    headers: { Authorization: user?.accessToken },
                     data: {
                         taskId,
                     }
-                }
+                },
             )
             const { [taskId]: removedKey, ...rest } = notion
             setNotion({ ...rest })

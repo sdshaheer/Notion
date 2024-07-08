@@ -1,10 +1,10 @@
 import { useState, createContext, useContext } from "react";
-import { Notion } from "../models/Todo";
+import { NotionInterface } from "../models/Todo";
 import { Todo } from "../models/Todo";
 
 interface NotionContextType {
-    notion: Notion
-    setNotion: React.Dispatch<React.SetStateAction<Notion>>
+    notion: NotionInterface
+    setNotion: React.Dispatch<React.SetStateAction<NotionInterface>>
     selectedTodo: Todo | null
     setSelectedTodo: React.Dispatch<React.SetStateAction<Todo | null>>
 
@@ -15,7 +15,7 @@ const NotionContext = createContext<NotionContextType | undefined>(undefined);
 
 export const NotionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [notion, setNotion] = useState<Notion>({})
+    const [notion, setNotion] = useState<NotionInterface>({})
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null)
 
 

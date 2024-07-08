@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { basePath } from '../utils'
-import { Notion } from '../models/Todo'
+import { NotionInterface } from '../models/Todo'
 import { toast } from 'react-toastify'
+import { useAuth } from '../context/AuthContext'
 
 interface props {
     getAllTasks: () => void
-    setNotion: React.Dispatch<React.SetStateAction<Notion>>
+    setNotion: React.Dispatch<React.SetStateAction<NotionInterface>>
 }
 
 const NewList: React.FC<props> = ({ getAllTasks, setNotion }) => {
 
+    const { user } = useAuth()
     const [isNewList, setIsNewList] = useState<boolean>(false)
     const [taskName, setTaskName] = useState<string>('')
 
@@ -23,7 +25,11 @@ const NewList: React.FC<props> = ({ getAllTasks, setNotion }) => {
     const handleAdd = async () => {
         if (taskName.trim() === '') return
         try {
-            const response = await axios.post(`${basePath}/task/createTask`, { taskName: taskName })
+            const response = await axios.post(`${basePath}/task/createTask`,
+                { taskName: taskName },
+                { headers: { Authorization: user?.accessToken } }
+
+            )
             setIsNewList(false)
             setTaskName('')
             setNotion((prevNotion) => ({ ...prevNotion, [response.data._id]: [] }))

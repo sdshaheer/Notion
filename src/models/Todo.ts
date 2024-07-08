@@ -13,7 +13,7 @@ export interface Task {
     todos: Todo[]
 }
 
-export interface Notion {
+export interface NotionInterface {
     [key: string]: Todo[]
 }
 

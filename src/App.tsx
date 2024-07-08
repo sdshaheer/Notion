@@ -1,112 +1,49 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import { Task, Todo, Notion } from './models/Todo'
-import Tasks from './components/Tasks'
-import { DragDropContext, DropResult } from 'react-beautiful-dnd'
-import NewList from './components/NewList'
-import { basePath } from './utils'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import { useNotion } from './context/notionContext'
+import { useState } from 'react'
+import './App.css'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
+import { Outlet } from 'react-router-dom'
+import Notion from './components/Notion'
+import HomePage from './pages/HomePage'
 
 
-const App: React.FC = () => {
+const PublicRoute = () => {
 
-  // const [notion, setNotion] = useState<Notion>({})
-  const { notion, setNotion } = useNotion()
+  const { isUserLoggedIn } = useAuth()
 
-  useEffect(() => {
-    getAllTasks()
-  }, [])
-
-  const getAllTasks = async () => {
-    try {
-      const response = await axios.get(`${basePath}/task/allTasks`)
-
-      const tempNotion: Notion = {}
-      response?.data?.forEach((task: Task) => {
-        tempNotion[task._id] = [...task.todos]
-      })
-      setNotion({ ...tempNotion })
-    } catch (error) {
-      console.log('error in fetch tasks : ', error)
-    }
+  if (isUserLoggedIn) {
+    return <Navigate to='/tasks' />
   }
+  return <Outlet />
 
-  const onDragEnd = async (result: DropResult) => {
-    const { source, destination } = result
-    let add: Todo
-    let tempNotion: Notion = notion
-    // console.log(source, destination)
+};
 
-    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return
+const ProtectedRoute = () => {
 
-    // remove specific todo from source
-    add = tempNotion[source.droppableId as keyof Notion][source.index]
-    tempNotion[source.droppableId as keyof Notion].splice(source.index, 1)
+  const { isUserLoggedIn } = useAuth()
+  const location = useLocation();
 
-    // add todo to destination task
-    tempNotion[destination.droppableId as keyof Notion].splice(destination.index, 0, add)
-    setNotion({ ...tempNotion })
-
-    try {
-      const response = await axios.post(`${basePath}/todo/moveTodo`,
-        {
-          source: source.droppableId,
-          destination: destination.droppableId,
-          destinationIndex: destination.index,
-          todo: add._id
-        }
-      )
-
-      toast.success(`item moved successfully to ${response.data?.taskName}`)
-    } catch (error) {
-      toast.success(`something went wrong`)
-      getAllTasks()
-      console.log('error in moving todo from source to destination')
-    }
-
+  if (!isUserLoggedIn) {
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
+  return <Outlet />;
 
-  const taskComponents = useMemo(() => {
-    return Object.entries(notion).map(([key, value]) => (
-      <div className='w-72 m-3 ' key={key}>
-        <Tasks taskId={key} todos={value} />
-      </div>
-    ));
-  }, [notion]);
+};
+
+function App() {
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className='w-screen h-screen flex flex-col bg-blue-50 gap-5'>
-        <div className='bg-blue-300 p-3 text-[18px] font-semibold'>Taskify</div>
-        {/* <div className='w-full flex flex-wrap items-start'>
-          <div className='w-72 m-3 bg-slate-200 rounded'>
-            <NewList
-              getAllTasks={getAllTasks}
-              setNotion={setNotion}
-            />
-          </div>
-          {taskComponents}
-
-        </div> */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5'>
-          <div className='w-72 m-3'>
-            <NewList
-              getAllTasks={getAllTasks}
-              setNotion={setNotion}
-            />
-          </div>
-          {taskComponents}
-
-        </div>
-      </div>
-    </DragDropContext>
+    <div className='w-screen h-screen bg-blue-300'>
+      <Routes>
+        <Route element={<PublicRoute />}>
+          <Route path='/' element={<HomePage />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path='/tasks' element={<Notion />} />
+        </Route>
+      </Routes>
+    </div>
   )
 }
-
-
-
-
-
 
 export default App
