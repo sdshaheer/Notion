@@ -1,77 +1,44 @@
-import React, { useState } from 'react'
-import InputBox from './components/InputBox'
+import React, { useEffect, useState, useMemo } from 'react'
+import { Task, Todo, Notion } from './models/Todo'
 import Tasks from './components/Tasks'
-import { Todo } from './models/Todo'
-import { taskTypes } from './models/Todo'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
+import NewList from './components/NewList'
+import { basePath } from './utils'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { useNotion } from './context/notionContext'
 
-interface Notion {
-  todo: Todo[],
-  inProgress: Todo[],
-  completed: Todo[],
-
-}
-
-const initialNotionState: Notion = {
-  todo: [],
-  inProgress: [],
-  completed: [],
-};
 
 const App: React.FC = () => {
-  const [todo, setTodo] = useState<string>("")
-  // const [todos, setTodos] = useState<Todo[]>([])
-  // const [completedTodos, setCompletedTodos] = useState<Todo[]>([])
 
-  const [notion, setNotion] = useState<Notion>(initialNotionState)
+  // const [notion, setNotion] = useState<Notion>({})
+  const { notion, setNotion } = useNotion()
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  useEffect(() => {
+    getAllTasks()
+  }, [])
 
-      const newTodo: Todo = {
-        id: Date.now(),
-        title: todo
-      }
+  const getAllTasks = async () => {
+    try {
+      const response = await axios.get(`${basePath}/task/allTasks`)
 
-      // setTodos((prevTodos) => [newTodo, ...prevTodos])
-      setNotion((prevNotion) => ({
-        ...prevNotion,
-        todo: [newTodo, ...prevNotion.todo]
-      }))
-      setTodo("")
+      const tempNotion: Notion = {}
+      response?.data?.forEach((task: Task) => {
+        tempNotion[task._id] = [...task.todos]
+      })
+      setNotion({ ...tempNotion })
+    } catch (error) {
+      console.log('error in fetch tasks : ', error)
     }
   }
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     const { source, destination } = result
+    let add: Todo
+    let tempNotion: Notion = notion
+    // console.log(source, destination)
 
     if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return
-
-    // let add: Todo,
-    //   active: Todo[] = todos,
-    //   completed: Todo[] = completedTodos
-
-    // if (source.droppableId === 'inProgress') {
-    //   add = active[source.index]
-    //   active.splice(source.index, 1)
-
-    // } else {
-    //   add = completed[source.index]
-    //   completed.splice(source.index, 1)
-
-    // }
-
-    // if (destination.droppableId === 'inProgress') {
-    //   active.splice(destination.index, 0, add)
-    // } else {
-    //   completed.splice(destination.index, 0, add)
-    // }
-
-    // setTodos([...active])
-    // setCompletedTodos([...completed])
-
-    let add: Todo,
-      tempNotion: Notion = notion
 
     // remove specific todo from source
     add = tempNotion[source.droppableId as keyof Notion][source.index]
@@ -81,59 +48,65 @@ const App: React.FC = () => {
     tempNotion[destination.droppableId as keyof Notion].splice(destination.index, 0, add)
     setNotion({ ...tempNotion })
 
+    try {
+      const response = await axios.post(`${basePath}/todo/moveTodo`,
+        {
+          source: source.droppableId,
+          destination: destination.droppableId,
+          destinationIndex: destination.index,
+          todo: add._id
+        }
+      )
+
+      toast.success(`item moved successfully to ${response.data?.taskName}`)
+    } catch (error) {
+      toast.success(`something went wrong`)
+      getAllTasks()
+      console.log('error in moving todo from source to destination')
+    }
 
   }
 
+  const taskComponents = useMemo(() => {
+    return Object.entries(notion).map(([key, value]) => (
+      <div className='w-72 m-3 ' key={key}>
+        <Tasks taskId={key} todos={value} />
+      </div>
+    ));
+  }, [notion]);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className='flex flex-col w-screen h-screen bg-slate-400 gap-10'>
-        <div className='w-full mt-10'>
-          <InputBox
-            todo={todo}
-            setTodo={setTodo}
-            handleKeyDown={handleKeyDown}
-          />
-        </div>
-        <div className='w-full flex flex-col md:flex-row md:justify-between'>
-          {/* {taskTypes.map((task) => {
-            if (task.id === 1) {
-              return (
-                <div className='w-full m-3' key={task.id}>
-                  <Tasks
-                    todos={todos}
-                    task={task}
-                  />
-                </div>
-              )
+      <div className='w-screen h-screen flex flex-col bg-blue-50 gap-5'>
+        <div className='bg-blue-300 p-3 text-[18px] font-semibold'>Taskify</div>
+        {/* <div className='w-full flex flex-wrap items-start'>
+          <div className='w-72 m-3 bg-slate-200 rounded'>
+            <NewList
+              getAllTasks={getAllTasks}
+              setNotion={setNotion}
+            />
+          </div>
+          {taskComponents}
 
-            } else if (task.id === 2) {
-              return (
-                <div className='w-full m-3' key={task.id}>
-                  <Tasks
-                    todos={completedTodos}
-                    task={task}
-                  />
-                </div>
-              )
-            }
-          })} */}
-          {
-            taskTypes.map((task) => {
-              return (
-                <div className='w-auto md:w-full m-3' key={task.id}>
-                  <Tasks
-                    todos={notion[task.value as keyof Notion]}
-                    task={task}
-                  />
-                </div>
-              )
-            })
-          }
+        </div> */}
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5'>
+          <div className='w-72 m-3'>
+            <NewList
+              getAllTasks={getAllTasks}
+              setNotion={setNotion}
+            />
+          </div>
+          {taskComponents}
+
         </div>
       </div>
     </DragDropContext>
-
   )
 }
+
+
+
+
+
 
 export default App

@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Todo } from '../models/Todo'
 import { Draggable } from 'react-beautiful-dnd'
+import Description from './description/Description'
+import { useNotion } from '../context/notionContext'
 
 interface props {
     index: number
@@ -9,22 +11,45 @@ interface props {
 
 
 const SingleTodo: React.FC<props> = ({ index, todo }) => {
-    return (
-        <Draggable draggableId={todo.id.toString()} index={index}>
-            {
-                (provided) => (
-                    <div
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        ref={provided.innerRef}
-                        className='bg-white rounded p-2 cursor-pointer'
-                    >
-                        <span className=''>{todo?.title}</span>
-                    </div>
-                )
-            }
-        </Draggable >
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const { setSelectedTodo } = useNotion()
 
+    const handleClose = () => {
+        setIsOpen(false)
+        setSelectedTodo(null)
+    }
+
+    const handleOpenModal = () => {
+        setIsOpen(true)
+        setSelectedTodo(todo)
+    }
+
+    return (
+        <div>
+            <Draggable draggableId={todo?._id} index={index}>
+                {
+                    (provided) => (
+                        <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            className='bg-white rounded p-2 cursor-pointer'
+                            onClick={handleOpenModal}
+                        >
+                            <span className=''>{todo?.title}</span>
+                        </div>
+                    )
+                }
+            </Draggable >
+
+            {isOpen &&
+                <Description
+                    isOpen={isOpen}
+                    handleClose={handleClose}
+                />
+            }
+
+        </div>
     )
 }
 
