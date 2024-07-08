@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Task, Todo, NotionInterface } from '../models/Todo'
 import Tasks from '../components/Tasks'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'

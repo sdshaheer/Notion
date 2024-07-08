@@ -10,7 +10,7 @@ interface props {
     setNotion: React.Dispatch<React.SetStateAction<NotionInterface>>
 }
 
-const NewList: React.FC<props> = ({ getAllTasks, setNotion }) => {
+const NewList: React.FC<props> = ({ setNotion }) => {
 
     const { user } = useAuth()
     const [isNewList, setIsNewList] = useState<boolean>(false)
