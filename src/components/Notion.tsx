@@ -14,7 +14,7 @@ import Header from './Header'
 const Notion: React.FC = () => {
 
     // const [notion, setNotion] = useState<Notion>({})
-    const { user, logout } = useAuth()
+    const { user } = useAuth()
     const { notion, setNotion } = useNotion()
 
     useEffect(() => {

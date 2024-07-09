@@ -9,7 +9,6 @@ import { toast } from 'react-toastify';
 import Spinner from '../Spinner'
 import { useAuth } from '../../context/AuthContext';
 import { TbClockHour8 } from "react-icons/tb";
-import { Todo } from '../../models/Todo';
 
 interface props {
     isOpen: boolean
