@@ -84,7 +84,7 @@ const Notion: React.FC = () => {
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <div className='w-screen h-screen flex flex-col bg-blue-50 gap-5'>
+            <div className='w-full min-h-screen max-h-full flex flex-col bg-blue-50 gap-5'>
                 <div className='bg-blue-300 p-3'>
                     <Header />
                 </div>
