@@ -4,6 +4,7 @@ import { basePath } from '../utils'
 import { toast } from 'react-toastify'
 import { useNotion } from '../context/notionContext'
 import { useAuth } from '../context/AuthContext'
+import { IoMdAdd } from "react-icons/io";
 
 
 interface props {
@@ -67,9 +68,15 @@ const NewTodo: React.FC<props> = ({ taskId, isNewTodo, setIsNewTodo }) => {
                     </div>
                 </div>
                 : <div
-                    className='bg-slate-300 rounded p-2 cursor-pointer'
+                    className='bg-slate-300 rounded p-2 cursor-pointer mt-1'
                     onClick={() => setIsNewTodo(true)}
-                >+ Add a todo</div>}
+                >
+                    <div className='flex items-center gap-2'>
+                        <IoMdAdd />
+                        <span>Add Todo</span>
+                    </div>
+                </div>
+            }
         </div>
     )
 }

@@ -15,7 +15,7 @@ const BodyDescription: React.FC<props> = ({ isEdit, description, setDescription 
                 size={18} className='mt-1.5'
             />
             <div className='w-full flex flex-col gap-1'>
-                <div className='font-semibold text-[18px]'>Description</div>
+                <div className='font-semibold text-[16px]'>Description</div>
                 {
                     isEdit ?
                         <div className='w-full flex flex-col gap-2'>

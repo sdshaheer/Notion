@@ -8,6 +8,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Spinner from '../Spinner'
 import { useAuth } from '../../context/AuthContext';
+import { TbClockHour8 } from "react-icons/tb";
+import { Todo } from '../../models/Todo';
 
 interface props {
     isOpen: boolean
@@ -24,6 +26,7 @@ const Description: React.FC<props> = ({ isOpen, handleClose }) => {
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    console.log(selectedTodo)
 
     useEffect(() => {
         if (selectedTodo) {
@@ -35,10 +38,23 @@ const Description: React.FC<props> = ({ isOpen, handleClose }) => {
         return () => setIsEdit(false)
     }, [])
 
+    const getLocalDate = (dateTime: string): string => {
+        const date = new Date(dateTime);
+        const localDate = date.toLocaleDateString(); // Get local date
+        return localDate
+    }
+
+    const getLocalTime = (dateTime: string): string => {
+        const date = new Date(dateTime);
+        const localTime = date.toLocaleTimeString(); // Get local date
+        return localTime
+    }
+
     const handleCancel = () => {
         if (selectedTodo) {
             setTitle(selectedTodo.title)
-            setDescription(selectedTodo.description)
+            const tempDescription = selectedTodo?.description ? selectedTodo?.description : 'Add a more detailed description ...'
+            setDescription(tempDescription)
         }
         setIsEdit(false)
     }
@@ -79,7 +95,7 @@ const Description: React.FC<props> = ({ isOpen, handleClose }) => {
     return (
         <ModalWrapper isOpen={isOpen} handleClose={handleClose}>
             {isLoading && <Spinner />}
-            <div className='m-3 flex flex-col gap-7'>
+            <div className='m-3 flex flex-col gap-5'>
                 <div className='w-full flex justify-between items-start'>
                     <Header
                         isEdit={isEdit}
@@ -88,6 +104,16 @@ const Description: React.FC<props> = ({ isOpen, handleClose }) => {
                         setTitle={setTitle}
                         handleClose={handleClose}
                     />
+                </div>
+                <div className='flex items-start gap-2'>
+                    <TbClockHour8 size={18} className='mt-1.5' />
+                    <div className='flex flex-col'>
+                        <div className='font-semibold text-[16px]'>Date Created</div>
+                        <div className='flex gap-1'>
+                            <span>{selectedTodo && getLocalDate(selectedTodo?.createdAt)}</span>
+                            <span>{selectedTodo && getLocalTime(selectedTodo?.createdAt)}</span>
+                        </div>
+                    </div>
                 </div>
                 <div className='w-full flex gap-2'>
                     <BodyDescription

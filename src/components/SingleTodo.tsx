@@ -24,16 +24,24 @@ const SingleTodo: React.FC<props> = ({ index, todo }) => {
         setSelectedTodo(todo)
     }
 
+    const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+        userSelect: 'none',
+        cursor: 'pointer',
+        background: isDragging ? 'orange' : 'white',
+        ...draggableStyle
+    });
+
     return (
         <div>
             <Draggable draggableId={todo?._id} index={index}>
                 {
-                    (provided) => (
+                    (provided, snapshot) => (
                         <div
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             ref={provided.innerRef}
-                            className='bg-white rounded p-2 cursor-pointer'
+                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                            className='bg-white rounded p-3 cursor-pointer shadow-lg'
                             onClick={handleOpenModal}
                         >
                             <span className=''>{todo?.title}</span>

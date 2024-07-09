@@ -126,7 +126,11 @@ const Tasks: React.FC<props> = ({ taskId, todos }) => {
                             {isLoading && <Spinner />}
                             <div className='flex justify-between'>
                                 {!isRename ?
-                                    <span className='font-semibold text-[16px]'>{taskName}</span> :
+                                    <div className='w-full font-semibold text-[16px] overflow-auto'>
+                                        <p className='break-words'>
+                                            {taskName}
+                                        </p>
+                                    </div> :
                                     <div className='flex relative'>
                                         <input
                                             type="text"
@@ -151,7 +155,7 @@ const Tasks: React.FC<props> = ({ taskId, todos }) => {
                                 />
                             </div>
 
-                            <div className='flex flex-col gap-3'>
+                            <div className='flex flex-col gap-2'>
                                 {todos.map((todo, index) =>
                                     <SingleTodo
                                         key={todo._id}

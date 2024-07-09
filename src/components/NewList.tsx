@@ -4,6 +4,8 @@ import { basePath } from '../utils'
 import { NotionInterface } from '../models/Todo'
 import { toast } from 'react-toastify'
 import { useAuth } from '../context/AuthContext'
+import { IoMdAdd } from "react-icons/io";
+
 
 interface props {
     getAllTasks: () => void
@@ -59,10 +61,16 @@ const NewList: React.FC<props> = ({ setNotion }) => {
                     </div>
                 </div>
                 : <div
-                    className='bg-slate-300 rounded p-2 m-1 cursor-pointer'
+                    className='bg-slate-200 rounded p-2 '
                     onClick={() => setIsNewList(true)}
-                >+ Add a list</div>}
-        </div>
+                >
+                    <div className='bg-slate-300 flex items-center p-2 rounded gap-2 cursor-pointer'>
+                        <IoMdAdd />
+                        <div className=''>Add New Task</div>
+                    </div>
+                </div>
+            }
+        </div >
     )
 }
 

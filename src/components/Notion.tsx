@@ -8,15 +8,17 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNotion } from '../context/notionContext'
 import { useAuth } from '../context/AuthContext'
+import Header from './Header'
 
 
 const Notion: React.FC = () => {
 
     // const [notion, setNotion] = useState<Notion>({})
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
     const { notion, setNotion } = useNotion()
 
     useEffect(() => {
+        setNotion({})
         getAllTasks()
     }, [])
 
@@ -40,7 +42,6 @@ const Notion: React.FC = () => {
         const { source, destination } = result
         let add: Todo
         let tempNotion: NotionInterface = notion
-        // console.log(source, destination)
 
         if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return
 
@@ -84,7 +85,9 @@ const Notion: React.FC = () => {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <div className='w-screen h-screen flex flex-col bg-blue-50 gap-5'>
-                <div className='bg-blue-300 p-3 text-[18px] font-semibold'>Taskify</div>
+                <div className='bg-blue-300 p-3'>
+                    <Header />
+                </div>
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5'>
                     <div className='w-72 m-3'>
                         <NewList

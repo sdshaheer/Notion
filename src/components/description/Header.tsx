@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MdOutlineSubtitles } from "react-icons/md";
+import { RiTodoLine } from "react-icons/ri";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import TodoMenu from '../menus/TodoMenu';
 import { useNotion } from '../../context/notionContext';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import Spinner from '../Spinner'
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
+
 
 
 interface props {
@@ -100,7 +101,7 @@ const Header: React.FC<props> = ({
             {isLoading && <Spinner />}
             <div className='w-full flex items-start justify-between'>
                 <div className='w-full flex items-start gap-2'>
-                    <MdOutlineSubtitles size={18} className='mt-1' />
+                    <RiTodoLine size={18} className='mt-1.5' />
                     <div className='w-full flex flex-col'>
                         {isEdit ? (
                             <input
@@ -110,11 +111,14 @@ const Header: React.FC<props> = ({
                                 className="rounded-md font-semibold p-1 text-[18px] border"
                             />
                         ) : (
-                            <div className="w-full rounded-md font-semibold text-[18px]">
+                            <div className="w-full rounded-md font-semibold text-[16px]">
                                 {title ?? ''}
                             </div>
                         )}
-                        <div className='text-[14px]'>in list <span style={{ textDecoration: 'underline' }}>{taskName ?? ''}</span></div>
+                        <div className='w-full flex gap-1 text-[14px]'>
+                            <div>In Tasklist</div>
+                            <div className='text-slate-900 font-medium'>[ {taskName ? taskName.length > 40 ? `${taskName.substring(0, 40)} ...` : taskName : ''} ]</div>
+                        </div>
                     </div>
                 </div>
                 <BiDotsVerticalRounded

@@ -3,7 +3,7 @@ export interface Todo {
     title: string
     task: string
     description: string
-
+    createdAt: string
 }
 
 export interface Task {
